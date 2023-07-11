@@ -186,6 +186,27 @@ func TestPathSetter(t *testing.T) {
 	}
 }
 
+func TestExtend(t *testing.T) {
+	cases := []struct {
+		rawURL         string
+		extensions     []string
+		expectedRawURL string
+	}{
+		{"http://a.io", []string{"foo", "bar"}, "http://a.io/foo/bar"},
+		{"http://a.io/", []string{"foo", "bar"}, "http://a.io/foo/bar"},
+		{"http://a.io/", []string{"/foo", "./bar"}, "http://a.io/foo/bar"},
+	}
+	for _, c := range cases {
+		sl := New().Base(c.rawURL)
+		for _, e := range c.extensions {
+			sl.Extend(e)
+		}
+		if sl.rawURL != c.expectedRawURL {
+			t.Errorf("expected %s, got %s", c.expectedRawURL, sl.rawURL)
+		}
+	}
+}
+
 func TestMethodSetters(t *testing.T) {
 	cases := []struct {
 		sling          *Sling
@@ -953,23 +974,23 @@ func TestReceive_errorCreatingRequest(t *testing.T) {
 }
 
 func TestReceive_context(t *testing.T) {
-       client, mux, server := testServer()
-       defer server.Close()
-       mux.HandleFunc("/foo", func(w http.ResponseWriter, r *http.Request) {
-       })
+	client, mux, server := testServer()
+	defer server.Close()
+	mux.HandleFunc("/foo", func(w http.ResponseWriter, r *http.Request) {
+	})
 
-       ctx, fn := context.WithCancel(context.Background())
-       defer fn()
+	ctx, fn := context.WithCancel(context.Background())
+	defer fn()
 
-       endpoint := New().Client(client).Get("http://example.com/foo")
-       resp, err := endpoint.New().ReceiveWithContext(ctx, nil, nil)
-       if err != nil {
-               t.Errorf("expected nil, got %v", err)
-       }
+	endpoint := New().Client(client).Get("http://example.com/foo")
+	resp, err := endpoint.New().ReceiveWithContext(ctx, nil, nil)
+	if err != nil {
+		t.Errorf("expected nil, got %v", err)
+	}
 
-       if resp.Request.Context() != ctx {
-               t.Error("request.Context() is not same as context passed during receive operation")
-       }
+	if resp.Request.Context() != ctx {
+		t.Error("request.Context() is not same as context passed during receive operation")
+	}
 }
 
 func TestReuseTcpConnections(t *testing.T) {
