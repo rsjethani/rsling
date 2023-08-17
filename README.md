@@ -1,20 +1,21 @@
-# Sling
-[![GoDoc](https://pkg.go.dev/badge/github.com/dghubble/sling.svg)](https://pkg.go.dev/github.com/dghubble/sling)
-[![Workflow](https://github.com/dghubble/sling/actions/workflows/test.yaml/badge.svg)](https://github.com/dghubble/sling/actions/workflows/test.yaml?query=branch%3Amain)
-[![Sponsors](https://img.shields.io/github/sponsors/dghubble?logo=github)](https://github.com/sponsors/dghubble)
-[![Mastodon](https://img.shields.io/badge/follow-news-6364ff?logo=mastodon)](https://fosstodon.org/@typhoon)
+# rsling
+[![GoDoc](https://pkg.go.dev/badge/github.com/rsjethani/rsling.svg)](https://pkg.go.dev/github.com/rsjethani/rsling)
+rsling is a Go HTTP client library for creating and sending API requests.
 
-<img align="right" src="https://storage.googleapis.com/dghubble/small-gopher-with-sling.png">
+rslings store HTTP Request properties to simplify sending requests and decoding responses. Check [usage](#usage) or the [examples](examples) to learn how to compose a rsling into your API client.
 
-Sling is a Go HTTP client library for creating and sending API requests.
-
-Slings store HTTP Request properties to simplify sending requests and decoding responses. Check [usage](#usage) or the [examples](examples) to learn how to compose a Sling into your API client.
+**Fair Notice:** rsling started its life as a normal fork of the already popular and awesome
+[sling](https://github.com/dghubble/sling). However overtime I noticed for some reason PRs like this and this
+etc. were not being entertained at all for unknown reasons hence I decided to make this repo into a hard/detached
+fork and go my separate way so that exciting new features and improvements can be added without hinderance. Having
+said that I would like to give a big thanks to the contributors and owners of the sling repository because
+without them this package could not have existed.
 
 ### Features
 
 * Method Setters: Get/Post/Put/Patch/Delete/Head
 * Add or Set Request Headers
-* Base/Path: Extend a Sling for different endpoints
+* Base/Path: Extend a rsling for different endpoints
 * Encode structs into URL query parameters
 * Encode a form or JSON into the Request Body
 * Receive JSON success or failure responses
@@ -23,16 +24,14 @@ Slings store HTTP Request properties to simplify sending requests and decoding r
 ## Install
 
 ```
-go get github.com/dghubble/sling
+go get github.com/rsjethani/rsling
 ```
 
 ## Documentation
-
-Read [GoDoc](https://godoc.org/github.com/dghubble/sling)
+Read [GoDoc](https://pkg.go.dev/badge/github.com/rsjethani/rsling)
 
 ## Usage
-
-Use a Sling to set path, method, header, query, or body properties and create an `http.Request`.
+Use a rsling to set path, method, header, query, or body properties and create an `http.Request`.
 
 ```go
 type Params struct {
@@ -40,7 +39,7 @@ type Params struct {
 }
 params := &Params{Count: 5}
 
-req, err := sling.New().Get("https://example.com").QueryStruct(params).Request()
+req, err := rsling.New().Get("https://example.com").QueryStruct(params).Request()
 client.Do(req)
 ```
 
@@ -50,21 +49,21 @@ Use `Path` to set or extend the URL for created Requests. Extension means the pa
 
 ```go
 // creates a GET request to https://example.com/foo/bar
-req, err := sling.New().Base("https://example.com/").Path("foo/").Path("bar").Request()
+req, err := rsling.New().Base("https://example.com/").Path("foo/").Path("bar").Request()
 ```
 
 Use `Get`, `Post`, `Put`, `Patch`, `Delete`, `Head`, `Options`, `Trace`, or `Connect` which are exactly the same as `Path` except they set the HTTP method too.
 
 ```go
-req, err := sling.New().Post("http://upload.com/gophers")
+req, err := rsling.New().Post("http://upload.com/gophers")
 ```
 
 ### Headers
 
-`Add` or `Set` headers for requests created by a Sling.
+`Add` or `Set` headers for requests created by a rsling.
 
 ```go
-s := sling.New().Base(baseUrl).Set("User-Agent", "Gophergram API Client")
+s := rsling.New().Base(baseUrl).Set("User-Agent", "Gophergram API Client")
 req, err := s.New().Get("gophergram/list").Request()
 ```
 
@@ -87,7 +86,7 @@ type IssueParams struct {
 ```
 
 ```go
-githubBase := sling.New().Base("https://api.github.com/").Client(httpClient)
+githubBase := rsling.New().Base("https://api.github.com/").Client(httpClient)
 
 path := fmt.Sprintf("repos/%s/%s/issues", owner, repo)
 params := &IssueParams{Sort: "updated", State: "open"}
@@ -111,7 +110,7 @@ type IssueRequest struct {
 ```
 
 ```go
-githubBase := sling.New().Base("https://api.github.com/").Client(httpClient)
+githubBase := rsling.New().Base("https://api.github.com/").Client(httpClient)
 path := fmt.Sprintf("repos/%s/%s/issues", owner, repo)
 
 body := &IssueRequest{
@@ -144,40 +143,40 @@ Requests will include an `application/x-www-form-urlencoded` Content-Type header
 
 #### Plain Body
 
-Use `Body` to set a plain `io.Reader` on requests created by a Sling.
+Use `Body` to set a plain `io.Reader` on requests created by a rsling.
 
 ```go
 body := strings.NewReader("raw body")
-req, err := sling.New().Base("https://example.com").Body(body).Request()
+req, err := rsling.New().Base("https://example.com").Body(body).Request()
 ```
 
 Set a content type header, if desired (e.g. `Set("Content-Type", "text/plain")`).
 
-### Extend a Sling
+### Extend a rsling
 
-Each Sling creates a standard `http.Request` (e.g. with some path and query
-params) each time `Request()` is called. You may wish to extend an existing Sling to minimize duplication (e.g. a common client or base url).
+Each rsling creates a standard `http.Request` (e.g. with some path and query
+params) each time `Request()` is called. You may wish to extend an existing rsling to minimize duplication (e.g. a common client or base url).
 
-Each Sling instance provides a `New()` method which creates an independent copy, so setting properties on the child won't mutate the parent Sling.
+Each rsling instance provides a `New()` method which creates an independent copy, so setting properties on the child won't mutate the parent rsling.
 
 ```go
 const twitterApi = "https://api.twitter.com/1.1/"
-base := sling.New().Base(twitterApi).Client(authClient)
+base := rsling.New().Base(twitterApi).Client(authClient)
 
-// statuses/show.json Sling
-tweetShowSling := base.New().Get("statuses/show.json").QueryStruct(params)
-req, err := tweetShowSling.Request()
+// statuses/show.json rsling
+tweetShowrsling := base.New().Get("statuses/show.json").QueryStruct(params)
+req, err := tweetShowrsling.Request()
 
-// statuses/update.json Sling
-tweetPostSling := base.New().Post("statuses/update.json").BodyForm(params)
-req, err := tweetPostSling.Request()
+// statuses/update.json rsling
+tweetPostrsling := base.New().Post("statuses/update.json").BodyForm(params)
+req, err := tweetPostrsling.Request()
 ```
 
-Without the calls to `base.New()`, `tweetShowSling` and `tweetPostSling` would reference the base Sling and POST to
+Without the calls to `base.New()`, `tweetShowrsling` and `tweetPostrsling` would reference the base rsling and POST to
 "https://api.twitter.com/1.1/statuses/show.json/statuses/update.json", which
 is undesired.
 
-Recap: If you wish to *extend* a Sling, create a new child copy with `New()`.
+Recap: If you wish to *extend* a rsling, create a new child copy with `New()`.
 
 ### Sending
 
@@ -224,10 +223,10 @@ Pass a nil `successV` or `failureV` argument to skip JSON decoding into that val
 
 ### Modify a Request
 
-Sling provides the raw http.Request so modifications can be made using standard net/http features. For example, in Go 1.7+ , add HTTP tracing to a request with a context:
+rsling provides the raw http.Request so modifications can be made using standard net/http features. For example, in Go 1.7+ , add HTTP tracing to a request with a context:
 
 ```go
-req, err := sling.New().Get("https://example.com").QueryStruct(params).Request()
+req, err := rsling.New().Get("https://example.com").QueryStruct(params).Request()
 // handle error
 
 trace := &httptrace.ClientTrace{
@@ -251,12 +250,12 @@ APIs typically define an endpoint (also called a service) for each type of resou
 const baseURL = "https://api.github.com/"
 
 type IssueService struct {
-    sling *sling.Sling
+    rsling *rsling.rsling
 }
 
 func NewIssueService(httpClient *http.Client) *IssueService {
     return &IssueService{
-        sling: sling.New().Client(httpClient).Base(baseURL),
+        rsling: rsling.New().Client(httpClient).Base(baseURL),
     }
 }
 
@@ -264,7 +263,7 @@ func (s *IssueService) ListByRepo(owner, repo string, params *IssueListParams) (
     issues := new([]Issue)
     githubError := new(GithubError)
     path := fmt.Sprintf("repos/%s/%s/issues", owner, repo)
-    resp, err := s.sling.New().Get(path).QueryStruct(params).Receive(issues, githubError)
+    resp, err := s.rsling.New().Get(path).QueryStruct(params).Receive(issues, githubError)
     if err == nil {
         err = githubError
     }
@@ -273,19 +272,19 @@ func (s *IssueService) ListByRepo(owner, repo string, params *IssueListParams) (
 ```
 
 ### Controlling lifetime via context
-All the above functionality of a sling can be made context aware.
+All the above functionality of a rsling can be made context aware.
 
 Getting a context aware request:
 ```go
 ctx, cancel := context.WithTimeout(context.Background(),10*time.Second)
-req, err := sling.New().Get("https://example.com").RequestWithContext(ctx)
+req, err := rsling.New().Get("https://example.com").RequestWithContext(ctx)
 ```
 Receiving in a context aware manner
 ```go
 success := &struct{}{}
 failure := &struct{}{}
 ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-resp, err := sling.New().Path("https://example.com").Get("/foo").ReceiveWithContext(ctx,success,failure)
+resp, err := rsling.New().Path("https://example.com").Get("/foo").ReceiveWithContext(ctx,success,failure)
 ```
 After making the request you can first check whether request completed in time before proceeding with the response:
 ```go
@@ -295,14 +294,14 @@ if errors.Is(err, context.DeadlineExceeded) {
 ```
 For more details about effectively using context please see: https://go.dev/blog/context
 
-## Example APIs using Sling
+## Example APIs using rsling
 
-* Digits [dghubble/go-digits](https://github.com/dghubble/go-digits)
+* Digits [rsjethani/go-digits](https://github.com/rsjethani/go-digits)
 * GoSquared [drinkin/go-gosquared](https://github.com/drinkin/go-gosquared)
 * Kala [ajvb/kala](https://github.com/ajvb/kala)
 * Parse [fergstar/go-parse](https://github.com/fergstar/go-parse)
 * Swagger Generator [swagger-api/swagger-codegen](https://github.com/swagger-api/swagger-codegen)
-* Twitter [dghubble/go-twitter](https://github.com/dghubble/go-twitter)
+* Twitter [rsjethani/go-twitter](https://github.com/rsjethani/go-twitter)
 * Stacksmith [jesustinoco/go-smith](https://github.com/jesustinoco/go-smith)
 
 Create a Pull Request to add a link to your own API.
@@ -311,11 +310,11 @@ Create a Pull Request to add a link to your own API.
 
 Many client libraries follow the lead of [google/go-github](https://github.com/google/go-github) (our inspiration!), but do so by reimplementing logic common to all clients.
 
-This project borrows and abstracts those ideas into a Sling, an agnostic component any API client can use for creating and sending requests.
+This project borrows and abstracts those ideas into a rsling, an agnostic component any API client can use for creating and sending requests.
 
 ## Contributing
 
-See the [Contributing Guide](https://gist.github.com/dghubble/be682c123727f70bcfe7).
+See the [Contributing Guide](https://gist.github.com/rsjethani/be682c123727f70bcfe7).
 
 ## License
 
