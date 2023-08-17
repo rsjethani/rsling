@@ -1,4 +1,4 @@
-package sling
+package rsling
 
 import (
 	"encoding/json"
