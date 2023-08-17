@@ -1,4 +1,4 @@
-module github.com/dghubble/sling
+module github.com/rsjethani/rsling
 
 go 1.19
 
