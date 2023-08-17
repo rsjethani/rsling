@@ -1,18 +1,19 @@
-# rsling
 [![GoDoc](https://pkg.go.dev/badge/github.com/rsjethani/rsling.svg)](https://pkg.go.dev/github.com/rsjethani/rsling)
+
+# Overview
 rsling is a Go HTTP client library for creating and sending API requests.
 
 rslings store HTTP Request properties to simplify sending requests and decoding responses. Check [usage](#usage) or the [examples](examples) to learn how to compose a rsling into your API client.
 
 **Fair Notice:** rsling started its life as a normal fork of the already popular and awesome
-[sling](https://github.com/dghubble/sling). However overtime I noticed for some reason PRs like this and this
-etc. were not being entertained at all for unknown reasons hence I decided to make this repo into a hard/detached
-fork and go my separate way so that exciting new features and improvements can be added without hinderance. Having
-said that I would like to give a big thanks to the contributors and owners of the sling repository because
-without them this package could not have existed.
+[sling](https://github.com/dghubble/sling). However overtime I noticed for some reason PRs like
+[this](https://github.com/dghubble/sling/pull/73) and [this](https://github.com/dghubble/sling/pull/85) etc. were not 
+being entertained at all for unknown reasons hence I decided to make this repo into a hard/detached fork and go my 
+separate way so that exciting new features and improvements can be added without hinderance. Having said that I would 
+like to give a big thanks to the contributors and owners of the sling repository because without them this package 
+could not have existed. 
 
 ### Features
-
 * Method Setters: Get/Post/Put/Patch/Delete/Head
 * Add or Set Request Headers
 * Base/Path: Extend a rsling for different endpoints
@@ -22,7 +23,6 @@ without them this package could not have existed.
 * Control a request's lifetime via context
 
 ## Install
-
 ```
 go get github.com/rsjethani/rsling
 ```
@@ -44,7 +44,6 @@ client.Do(req)
 ```
 
 ### Path
-
 Use `Path` to set or extend the URL for created Requests. Extension means the path will be resolved relative to the existing URL.
 
 ```go
@@ -59,7 +58,6 @@ req, err := rsling.New().Post("http://upload.com/gophers")
 ```
 
 ### Headers
-
 `Add` or `Set` headers for requests created by a rsling.
 
 ```go
@@ -70,7 +68,6 @@ req, err := s.New().Get("gophergram/list").Request()
 ### Query
 
 #### QueryStruct
-
 Define [url tagged structs](https://godoc.org/github.com/google/go-querystring/query). Use `QueryStruct` to encode a struct as query parameters on requests.
 
 ```go
@@ -96,7 +93,6 @@ req, err := githubBase.New().Get(path).QueryStruct(params).Request()
 ### Body
 
 #### JSON Body
-
 Define [JSON tagged structs](https://golang.org/pkg/encoding/json/). Use `BodyJSON` to JSON encode a struct as the Body on requests.
 
 ```go
