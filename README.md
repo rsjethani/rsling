@@ -1,4 +1,7 @@
 [![GoDoc](https://pkg.go.dev/badge/github.com/rsjethani/rsling.svg)](https://pkg.go.dev/github.com/rsjethani/rsling)
+[![Build Status](https://github.com/rsjethani/rsling/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/rsjethani/rsling/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/rsjethani/rsling)](https://goreportcard.com/report/github.com/rsjethani/rsling)
+
 
 # Overview
 rsling is a Go HTTP client library for creating and sending API requests.
