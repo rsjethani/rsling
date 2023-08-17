@@ -176,4 +176,4 @@ failureV for non-2XX responses.
 
 Pass a nil successV or failureV argument to skip JSON decoding into that value.
 */
-package sling
+package rsling
