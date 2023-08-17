@@ -513,7 +513,7 @@ func TestRequest_body(t *testing.T) {
 	for _, c := range cases {
 		req, _ := c.sling.Request()
 		buf := new(bytes.Buffer)
-		buf.ReadFrom(req.Body)
+		_, _ = buf.ReadFrom(req.Body)
 		// req.Body should have contained the expectedBody string
 		if value := buf.String(); value != c.expectedBody {
 			t.Errorf("expected Request.Body %s, got %s", c.expectedBody, value)
@@ -622,7 +622,7 @@ func TestAddQueryStructs(t *testing.T) {
 	}
 	for _, c := range cases {
 		reqURL, _ := url.Parse(c.rawurl)
-		addQueryStructs(reqURL, c.queryStructs)
+		_ = addQueryStructs(reqURL, c.queryStructs)
 		if reqURL.String() != c.expected {
 			t.Errorf("expected %s, got %s", c.expected, reqURL.String())
 		}
@@ -820,7 +820,7 @@ func TestReceive_success_nonDefaultDecoder(t *testing.T) {
 
 	mux.HandleFunc("/foo/file", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/octet-stream")
-		w.Write(expectedData)
+		_, _ = w.Write(expectedData)
 	})
 
 	endpoint := New().Client(client).Base("http://example.com/").Path("foo/").Get("file")
@@ -1011,7 +1011,9 @@ func TestReuseTcpConnections(t *testing.T) {
 		},
 	}
 
-	go server.Serve(ln)
+	go func() {
+		_ = server.Serve(ln)
+	}()
 
 	endpoint := New().Client(http.DefaultClient).Base(rawURL).Path("foo/").Get("get")
 
@@ -1025,7 +1027,7 @@ func TestReuseTcpConnections(t *testing.T) {
 		}
 	}
 
-	server.Shutdown(context.Background())
+	_ = server.Shutdown(context.Background())
 
 	if count := atomic.LoadInt32(&connCount); count != 1 {
 		t.Errorf("expected 1, got %v", count)
@@ -1070,7 +1072,7 @@ func assertQuery(t *testing.T, expected map[string]string, req *http.Request) {
 // assertPostForm tests that the Request has the expected key values pairs url
 // encoded in its Body
 func assertPostForm(t *testing.T, expected map[string]string, req *http.Request) {
-	req.ParseForm() // parses request Body to put url.Values in r.Form/r.PostForm
+	_ = req.ParseForm() // parses request Body to put url.Values in r.Form/r.PostForm
 	expectedValues := url.Values{}
 	for key, value := range expected {
 		expectedValues.Add(key, value)
