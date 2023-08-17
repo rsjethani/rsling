@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/coreos/pkg/flagutil"
-	"github.com/dghubble/sling"
+	"github.com/rsjethani/rsling"
 	"golang.org/x/oauth2"
 )
 
@@ -66,13 +66,13 @@ type IssueListParams struct {
 
 // IssueService provides methods for creating and reading issues.
 type IssueService struct {
-	sling *sling.Sling
+	rsling *rsling.Sling
 }
 
 // NewIssueService returns a new IssueService.
 func NewIssueService(httpClient *http.Client) *IssueService {
 	return &IssueService{
-		sling: sling.New().Client(httpClient).Base(baseURL),
+		rsling: rsling.New().Client(httpClient).Base(baseURL),
 	}
 }
 
@@ -80,7 +80,7 @@ func NewIssueService(httpClient *http.Client) *IssueService {
 func (s *IssueService) List(params *IssueListParams) ([]Issue, *http.Response, error) {
 	issues := new([]Issue)
 	githubError := new(GithubError)
-	resp, err := s.sling.New().Path("issues").QueryStruct(params).Receive(issues, githubError)
+	resp, err := s.rsling.New().Path("issues").QueryStruct(params).Receive(issues, githubError)
 	if err == nil {
 		err = githubError
 	}
@@ -92,7 +92,7 @@ func (s *IssueService) ListByRepo(owner, repo string, params *IssueListParams) (
 	issues := new([]Issue)
 	githubError := new(GithubError)
 	path := fmt.Sprintf("repos/%s/%s/issues", owner, repo)
-	resp, err := s.sling.New().Get(path).QueryStruct(params).Receive(issues, githubError)
+	resp, err := s.rsling.New().Get(path).QueryStruct(params).Receive(issues, githubError)
 	if err == nil {
 		err = githubError
 	}
@@ -104,7 +104,7 @@ func (s *IssueService) Create(owner, repo string, issueBody *IssueRequest) (*Iss
 	issue := new(Issue)
 	githubError := new(GithubError)
 	path := fmt.Sprintf("repos/%s/%s/issues", owner, repo)
-	resp, err := s.sling.New().Post(path).BodyJSON(issueBody).Receive(issue, githubError)
+	resp, err := s.rsling.New().Post(path).BodyJSON(issueBody).Receive(issue, githubError)
 	if err == nil {
 		err = githubError
 	}
