@@ -16,6 +16,12 @@ separate way so that exciting new features and improvements can be added without
 like to give a big thanks to the contributors and owners of the sling repository because without them this package 
 could not have existed. 
 
+**Differences from sling:**
+- Easier to perform context aware requests, [see](https://github.com/rsjethani/rsling/commit/bd74a7a823f4e5f89b56115e3a91a301e74ce4ec)
+- Ability to provide separate response decoders for success and failure cases, [see](https://github.com/rsjethani/rsling/commit/b04385a7c3839ccd651f7d58eda13326b3d3333b)
+- Ability to pass on response data as it is for data streaming purposes or deferred decoding, [see](https://github.com/rsjethani/rsling/commit/b285c20f7ca3aef7ba7c7c1c5a0f5e3b837c2996)
+- Much more intuitive way of extending URL paths using the `Extend` API, [see](https://github.com/rsjethani/rsling/commit/7a1ff5d2a4e5eaef8895eafad9ed074293abe14a)
+
 ### Features
 * Method Setters: Get/Post/Put/Patch/Delete/Head
 * Add or Set Request Headers
